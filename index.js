@@ -26,6 +26,7 @@ async function run() {
 
     const toolsCollection = client.db("construction_tools").collection("tools");
     const orderCollection = client.db("construction_tools").collection("orders");
+    const reviewCollection = client.db("construction_tools").collection("reviews");
 
     app.get('/tools', async (req, res) => {
       const query = {};
@@ -39,22 +40,41 @@ async function run() {
       const tool = await toolsCollection.findOne(query)
       res.send(tool)
     })
+    app.get('/reviews', async (req, res) => {
+      const query = {}
+      const reviews = await reviewCollection.find(query).toArray()
+      res.send(reviews)
+    })
 
+    app.post('/reviews', async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review)
+      res.send({ success: true })
+    })
 
+    app.get('/order', async (req, res) => {
+      const userEmail = req.query.userEmail
+      const query = { userEmail: userEmail }
+      const result = await orderCollection.find(query).toArray()
+      res.send(result)
+    })
 
-    app.post('/order',async (req, res) => {
+    app.post('/order', async (req, res) => {
       const order = req.body;
-      const query = {userEmail: order.userEmail, toolName: order.toolName}
+      const query = { userEmail: order.userEmail, toolName: order.toolName }
       const remain = await orderCollection.findOne(query)
-      if(remain){
-        return res.send({success: false}  )
+      if (remain) {
+        return res.send({ success: false })
       }
       const result = await orderCollection.insertOne(order)
-      res.send({success: true})
-
-
-
+      res.send({ success: true })
     })
+
+
+
+
+
+
   }
 
 
