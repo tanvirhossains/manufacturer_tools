@@ -44,8 +44,13 @@ async function run() {
 
     app.post('/order',async (req, res) => {
       const order = req.body;
+      const query = {userEmail: order.userEmail, toolName: order.toolName}
+      const remain = await orderCollection.findOne(query)
+      if(remain){
+        return res.send({success: false}  )
+      }
       const result = await orderCollection.insertOne(order)
-      res.send(result)
+      res.send({success: true})
 
 
 
