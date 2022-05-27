@@ -40,6 +40,12 @@ async function run() {
       const tool = await toolsCollection.findOne(query)
       res.send(tool)
     })
+    app.post('/tools', async (req, res) => {
+      const tools = req.body;
+      const result = await toolsCollection.insertOne(tools)
+      res.send({ success: true  })
+    })
+
     app.get('/reviews', async (req, res) => {
       const query = {}
       const reviews = await reviewCollection.find(query).toArray()
@@ -49,7 +55,7 @@ async function run() {
     app.post('/reviews', async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review)
-      res.send({ success: true })
+      res.send({ success: true  })
     })
 
     app.get('/order', async (req, res) => {
