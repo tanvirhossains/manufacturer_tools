@@ -17,7 +17,7 @@ app.use(express.json())
 const uri = `mongodb+srv://${process.env.TOOLS_USER}:${process.env.TOOLS_PASSWORD}@cluster0.wdai4.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+console.log(uri)
 async function run() {
   try {
     await client.connect();
