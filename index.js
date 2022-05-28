@@ -27,7 +27,10 @@ async function run() {
     const toolsCollection = client.db("construction_tools").collection("tools");
     const orderCollection = client.db("construction_tools").collection("orders");
     const reviewCollection = client.db("construction_tools").collection("reviews");
+    const userCollection = client.db("construction_tools").collection("user");
 
+
+    //-----------tools ------------
     app.get('/tools', async (req, res) => {
       const query = {};
       const tools = await toolsCollection.find(query).toArray();
@@ -43,9 +46,10 @@ async function run() {
     app.post('/tools', async (req, res) => {
       const tools = req.body;
       const result = await toolsCollection.insertOne(tools)
-      res.send({ success: true  })
+      res.send({ success: true })
     })
 
+    //----------reviews --------------
     app.get('/reviews', async (req, res) => {
       const query = {}
       const reviews = await reviewCollection.find(query).toArray()
@@ -55,9 +59,16 @@ async function run() {
     app.post('/reviews', async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review)
-      res.send({ success: true  })
+      res.send({ success: true })
     })
 
+
+    //-------orders----------  
+    app.get('/orders', async (req, res) => {
+      const query = {}
+      const allOrders = await orderCollection.find(query).toArray()
+      res.send(allOrders)
+    })
     app.get('/order', async (req, res) => {
       const userEmail = req.query.userEmail
       const query = { userEmail: userEmail }
@@ -77,7 +88,41 @@ async function run() {
     })
 
 
+    // ------------user and create a admin ----------------
+    app.put('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send(result);
+    })
+    app.put('/user/admin/:email', async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email }
+      const updateDoc = {
+        $set: { role: 'admin' }
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
 
+    app.get('/user', async (req, res) => {
+      const query = {}
+      const result = await userCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    //-------------admin
+    app.get('/admin/:email', async (req, res) => {
+      const existUserEmail = req.params.email
+      const existUser = await userCollection.findOne({ email: existUserEmail })
+      const isAdmin = existUser.role === 'admin'
+      res.send({ admin: isAdmin })
+    })
 
 
 
