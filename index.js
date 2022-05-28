@@ -31,7 +31,7 @@ async function run() {
     const reviewCollection = client.db("construction_tools").collection("reviews");
     const userCollection = client.db("construction_tools").collection("user");
 
-
+    console.log('all are gonna be ok')
     //-----------tools ------------
     app.get('/tools', async (req, res) => {
       const query = {};
